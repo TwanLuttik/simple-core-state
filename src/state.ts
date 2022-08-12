@@ -1,13 +1,17 @@
-import { Simple } from "./simple";
+import { SimpleInstance } from './instance';
+import { Simple } from './simple';
 
 export class State {
-  public _value: any;
+	public _name: string;
+	public _value: any;
 
-  constructor(defaultValue?: any) {
-    this._value = defaultValue;
-  }
+	constructor(key: string) {
+		this._name = key;
+	}
 
-  setValue(newValue: any) {
-    console.log("set value for this state");
-  }
+	public setValue(newValue: any) {
+		this._value = newValue;
+	}
+
+	persist() {}
 }

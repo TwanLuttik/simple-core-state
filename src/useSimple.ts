@@ -1,6 +1,6 @@
-import { State } from "./state";
-import React from "react";
+import { State } from './state';
+import React from 'react';
 
-export const useSimpleState = (dep: State) => {
-  return dep._value;
-};
+export function useSimple(dep: State) {
+	return dep._value;
+}

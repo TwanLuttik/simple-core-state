@@ -3,7 +3,10 @@
     "module": "ESNext",
     "declaration": true,
     "target": "es2015",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["es2015", "dom"]
   },
   "include": ["src/**/*"]
 }
