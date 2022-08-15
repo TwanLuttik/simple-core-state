@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { SimpleInstance } from './instance';
 import { Simple } from './simple';
 
@@ -11,6 +12,7 @@ export class State {
 
 	public setValue(newValue: any) {
 		this._value = newValue;
+		SimpleInstance().containerController.triggerReRender(this._name);
 	}
 
 	persist() {}

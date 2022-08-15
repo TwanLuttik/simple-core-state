@@ -1,15 +1,23 @@
 import { State } from './state';
+import { ContainerController } from './container';
 import { InitilizeOptions } from './types';
 
-type GlobalDataValueType<T extends object> = { [K in keyof T]: State };
+type GlobalDataValueType = { [key: string]: any };
+type SimpleClassParams = ConstructorParameters<typeof Simple>;
+type SimpleClassFirstParam = SimpleClassParams['0'];
 
 export class Simple<T extends object> {
+	public containerController: ContainerController;
 	// internal data store object
 
-	_data: GlobalDataValueType<T> | {} = {};
+	public _data: { [K in keyof T]: State } | {} = {};
+
+	// public _data: GlobalDataValueType<{ [key: string]: any }> | {} = {};
 	private config: InitilizeOptions;
 
-	constructor(defaultStructure?: { [K in keyof T]: any }, c?: InitilizeOptions) {
+	constructor(defaultStructure: { [K in keyof T]: any }, c?: InitilizeOptions) {
+		// initialize container controller that handles the re renders for useSimple hook
+		this.containerController = new ContainerController(this);
 		this.bindToGlobal();
 
 		// set the config if we have any config options
@@ -40,7 +48,7 @@ export class Simple<T extends object> {
 	// -- end
 
 	core() {
-		return this._data as GlobalDataValueType<T>;
+		return this._data as { [K in keyof T]: State };
 	}
 
 	private bindToGlobal() {
