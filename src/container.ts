@@ -38,14 +38,10 @@ export class ContainerController {
 
 	//
 	public triggerReRender(key?: string) {
-		console.log('triggering reRender');
-
 		this.keysList.forEach((v) => {
 			if (v.state_key_name === key) {
 				v.callback();
 			}
 		});
-		// if (this.keysList.has(key)) {
-		// }
 	}
 }
