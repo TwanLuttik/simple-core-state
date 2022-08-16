@@ -1,8 +1,6 @@
 import { State } from './state';
-import React from 'react';
 import { SimpleInstance } from './instance';
-
-globalThis.React1 = React;
+import React from 'react';
 
 export function useSimple(state: State) {
 	const [_, set_] = React.useState({});
@@ -15,5 +13,5 @@ export function useSimple(state: State) {
 		return () => SimpleInstance().containerController.removeSubscription(subContainerInstance);
 	}, []);
 
-	return [state._value];
+	return state._value;
 }

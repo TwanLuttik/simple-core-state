@@ -24,8 +24,6 @@ export class ContainerController {
 
 	//
 	public subscribe(state: State, callback: () => void) {
-		console.log(`adding [${state._name}] subscription to container controller`);
-
 		const ContainerComponentInstance = new ContainerComponent(state, callback);
 
 		this.keysList.add(ContainerComponentInstance);

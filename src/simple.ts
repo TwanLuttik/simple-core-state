@@ -1,6 +1,7 @@
 import { State } from './state';
 import { ContainerController } from './container';
 import { InitilizeOptions } from './types';
+import { StorageController } from './storage';
 
 type GlobalDataValueType = { [key: string]: any };
 type SimpleClassParams = ConstructorParameters<typeof Simple>;
@@ -8,16 +9,19 @@ type SimpleClassFirstParam = SimpleClassParams['0'];
 
 export class Simple<T extends object> {
 	public containerController: ContainerController;
+	public storage: StorageController<T>;
 	// internal data store object
 
 	public _data: { [K in keyof T]: State } | {} = {};
 
 	// public _data: GlobalDataValueType<{ [key: string]: any }> | {} = {};
-	private config: InitilizeOptions;
+	public config: InitilizeOptions;
 
 	constructor(defaultStructure: { [K in keyof T]: any }, c?: InitilizeOptions) {
 		// initialize container controller that handles the re renders for useSimple hook
 		this.containerController = new ContainerController(this);
+		this.storage = new StorageController(this);
+
 		this.bindToGlobal();
 
 		// set the config if we have any config options
@@ -47,10 +51,11 @@ export class Simple<T extends object> {
 	}
 	// -- end
 
-	core() {
+	public core() {
 		return this._data as { [K in keyof T]: State };
 	}
 
+	// Bind the instance to the global window
 	private bindToGlobal() {
 		if (!globalThis['__Simple__']) {
 			globalThis['__Simple__'] = this;
