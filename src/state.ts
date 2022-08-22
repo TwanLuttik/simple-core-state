@@ -28,7 +28,7 @@ export class State<valueType = any> {
 	 * @description Update a key in an object (only support for object)
 	 * @param newValue
 	 */
-	public patchObject(newValue: { [K in keyof valueType] }) {
+	public patchObject(newValue: Partial<{ [K in keyof valueType] }>) {
 		// Check if the current value is an object
 		if (typeof this._value !== 'object') {
 			throw `Can't patch a non object key`;
@@ -41,7 +41,13 @@ export class State<valueType = any> {
 
 		// loop trough the k/v to patch the keys in the object
 		for (let k of Object.entries(newValue)) {
-			this._value[k[0]] = k[1];
+			if (this._value === null) {
+				// TODO: Fix this typing
+				// @ts-ignore
+				this._value = { [k[0]]: k[1] };
+			} else {
+				this._value[k[0]] = k[1];
+			}
 		}
 
 		// Check if we need to persist
