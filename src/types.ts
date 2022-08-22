@@ -1,7 +1,6 @@
 import { State } from './state';
 
 export interface InitilizeOptions {
-	someConfig?: boolean;
 	Storage?: StorageConfig;
 }
 

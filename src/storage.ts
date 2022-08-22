@@ -5,15 +5,19 @@ export class StorageController<T extends object> {
 	public SimpleInstance: Simple<any>;
 	public persistance: (keyof T)[] = [];
 	public enalbed: boolean = false;
-	public config: StorageConfig & { customEnabled: boolean };
+	public config: StorageConfig & { customEnabled: boolean } = { customEnabled: false };
 
 	constructor(instance: Simple<any>, con?: StorageConfig) {
 		this.SimpleInstance = instance;
 
 		// If the get and set methods are supplied we are expecting we are not using LocalStorage anymore
 		if (con && !!Object.keys(con?.custom)?.length) {
-			this.config.customEnabled = true;
-			this.config.custom = con.custom;
+			let b = {
+				customEnabled: true,
+				custom: con.custom,
+			};
+
+			Object.assign(this.config, b);
 		}
 	}
 
@@ -25,7 +29,7 @@ export class StorageController<T extends object> {
 		this.initializeStorageWithCore();
 	}
 
-	private initializeStorageWithCore() {
+	private async initializeStorageWithCore() {
 		let coreToStorageUpdate: string[] = [];
 
 		// Check first if there is a localstorage value present to update the core
@@ -36,7 +40,7 @@ export class StorageController<T extends object> {
 				item._peristed = true;
 
 				// Check if the key value is present in the local storage and update the core data
-				const localstoragevalue = this.get(item._name);
+				const localstoragevalue = await this.get(item._name);
 				const dataValue = this.SimpleInstance._data[item._value];
 
 				// If the key is not present in the storage, add to the list for update
@@ -64,7 +68,11 @@ export class StorageController<T extends object> {
 		if (this.config?.customEnabled) {
 			await this.config.custom.set('_simple_' + key, JSON.stringify(value));
 		} else {
-			localStorage.setItem('_simple_' + key, JSON.stringify(value));
+			if (window?.localStorage) {
+				localStorage.setItem('_simple_' + key, JSON.stringify(value));
+			} else {
+				throw 'Default storage instance not found';
+			}
 		}
 	}
 
@@ -72,7 +80,11 @@ export class StorageController<T extends object> {
 		if (this.config?.customEnabled) {
 			return JSON.parse(await this.config.custom.get('_simple_' + key));
 		} else {
-			return JSON.parse(localStorage.getItem('_simple_' + key));
+			if (window?.localStorage) {
+				return JSON.parse(localStorage.getItem('_simple_' + key));
+			} else {
+				throw 'Default storage instance not found';
+			}
 		}
 	}
 }
