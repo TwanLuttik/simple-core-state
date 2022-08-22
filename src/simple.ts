@@ -3,31 +3,19 @@ import { ContainerController } from './container';
 import { InitilizeOptions } from './types';
 import { StorageController } from './storage';
 
-type GlobalDataValueType = { [key: string]: any };
-type SimpleClassParams = ConstructorParameters<typeof Simple>;
-type SimpleClassFirstParam = SimpleClassParams['0'];
-
 export class Simple<T extends object> {
 	public containerController: ContainerController;
 	public storage: StorageController<T>;
+
 	// internal data store object
-
-	public _data: { [K in keyof T]: State } | {} = {};
-
-	// public _data: GlobalDataValueType<{ [key: string]: any }> | {} = {};
-	public config: InitilizeOptions;
+	public _data: { [K in keyof T]: State<T[K]> } | {} = {};
 
 	constructor(defaultStructure: { [K in keyof T]: any }, c?: InitilizeOptions) {
-		// initialize container controller that handles the re renders for useSimple hook
-		this.containerController = new ContainerController(this);
-		this.storage = new StorageController(this);
-
 		this.bindToGlobal();
 
-		// set the config if we have any config options
-		if (!!Object.entries(c)?.length) {
-			this.config = c;
-		}
+		// initialize container controller that handles the re renders for useSimple hook
+		this.containerController = new ContainerController(this);
+		this.storage = new StorageController(this, c?.Storage);
 
 		// build the base structure
 		for (let item of Object.entries(defaultStructure)) {
@@ -36,23 +24,10 @@ export class Simple<T extends object> {
 			this._data[key] = new State(key);
 			this._data[key].setValue(item[1]);
 		}
-
-		console.log(`Data object has been build ->`, this._data);
 	}
-
-	// These are only core testings
-	test() {
-		console.log('testings');
-	}
-	clear() {
-		for (let item of Object.entries(this._data)) {
-			this._data[item[0]] = new State(item[0]);
-		}
-	}
-	// -- end
 
 	public core() {
-		return this._data as { [K in keyof T]: State };
+		return this._data as { [K in keyof T]: State<T[K]> };
 	}
 
 	// Bind the instance to the global window

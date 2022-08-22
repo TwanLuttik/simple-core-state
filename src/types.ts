@@ -5,10 +5,9 @@ export interface InitilizeOptions {
 	Storage?: StorageConfig;
 }
 
-export interface StorageConfig {
-	type?: 'AsyncStorage' | 'MMKV';
+export type StorageConfig = {
 	custom?: {
-		get: () => void;
-		set: () => void;
+		get: (key: string) => Promise<any>;
+		set: (key: string, value: any) => Promise<void>;
 	};
-}
+};

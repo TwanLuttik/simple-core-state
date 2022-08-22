@@ -2,7 +2,9 @@ import { State } from './state';
 import { SimpleInstance } from './instance';
 import React from 'react';
 
-export function useSimple(state: State) {
+type SimpleValue<T> = State<T>;
+
+export function useSimple<T>(state: SimpleValue<T>) {
 	const [_, set_] = React.useState({});
 
 	React.useEffect(function () {
@@ -13,5 +15,5 @@ export function useSimple(state: State) {
 		return () => SimpleInstance().containerController.removeSubscription(subContainerInstance);
 	}, []);
 
-	return state._value;
+	return state._value as SimpleValue<T>['_value'];
 }

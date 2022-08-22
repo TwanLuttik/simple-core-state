@@ -1,12 +1,20 @@
 import { Simple } from './simple';
+import { StorageConfig } from './types';
 
 export class StorageController<T extends object> {
 	public SimpleInstance: Simple<any>;
 	public persistance: (keyof T)[] = [];
 	public enalbed: boolean = false;
+	public config: StorageConfig & { customEnabled: boolean };
 
-	constructor(instance: Simple<any>) {
+	constructor(instance: Simple<any>, con?: StorageConfig) {
 		this.SimpleInstance = instance;
+
+		// If the get and set methods are supplied we are expecting we are not using LocalStorage anymore
+		if (con && !!Object.keys(con?.custom)?.length) {
+			this.config.customEnabled = true;
+			this.config.custom = con.custom;
+		}
 	}
 
 	// register which keys need to be persisted
@@ -28,8 +36,7 @@ export class StorageController<T extends object> {
 				item._peristed = true;
 
 				// Check if the key value is present in the local storage and update the core data
-
-				const localstoragevalue = JSON.parse(localStorage.getItem('_simple_' + item._name));
+				const localstoragevalue = this.get(item._name);
 				const dataValue = this.SimpleInstance._data[item._value];
 
 				// If the key is not present in the storage, add to the list for update
@@ -48,12 +55,24 @@ export class StorageController<T extends object> {
 		for (let item of this.persistance) {
 			if (coreToStorageUpdate.includes(item as string)) {
 				const keyName = item as string;
-				localStorage.setItem('_simple_' + keyName, JSON.stringify(this.SimpleInstance._data[keyName]._value));
+				this.set(keyName, this.SimpleInstance._data[keyName]._value);
 			}
 		}
 	}
 
-	public set(key: string, value: string) {
-		localStorage.setItem('_simple_' + key, JSON.stringify(value));
+	public async set(key: string, value: any) {
+		if (this.config?.customEnabled) {
+			await this.config.custom.set('_simple_' + key, JSON.stringify(value));
+		} else {
+			localStorage.setItem('_simple_' + key, JSON.stringify(value));
+		}
+	}
+
+	public async get(key: string) {
+		if (this.config?.customEnabled) {
+			return JSON.parse(await this.config.custom.get('_simple_' + key));
+		} else {
+			return JSON.parse(localStorage.getItem('_simple_' + key));
+		}
 	}
 }
