@@ -10,3 +10,5 @@ export type StorageConfig = {
 		set: (key: string, value: any) => Promise<void>;
 	};
 };
+
+export type DataType<T> = { [K in keyof T]: State<T[K]> };

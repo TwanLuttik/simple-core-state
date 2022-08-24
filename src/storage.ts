@@ -1,9 +1,13 @@
 import { Simple } from './simple';
-import { StorageConfig } from './types';
+import { DataType, StorageConfig } from './types';
+import { BuildStorageObjectFromCustom } from './utils';
+
+type DataToKeysArray<T> = (keyof DataType<T>)[];
+type StorageObject<T> = { [K in keyof T]: K };
 
 export class StorageController<T extends object> {
 	public SimpleInstance: Simple<any>;
-	public persistance: (keyof T)[] = [];
+	public persistance: DataToKeysArray<T> | [] = [];
 	public enalbed: boolean = false;
 	public config: StorageConfig & { customEnabled: boolean } = { customEnabled: false };
 
@@ -22,7 +26,7 @@ export class StorageController<T extends object> {
 	}
 
 	// register which keys need to be persisted
-	public perist(keys: (keyof T)[]) {
+	public perist(keys: DataToKeysArray<T>) {
 		this.persistance = keys;
 
 		// this will sync up the core with storage and reversed in order
@@ -30,41 +34,23 @@ export class StorageController<T extends object> {
 	}
 
 	private async initializeStorageWithCore() {
-		let coreToStorageUpdate: string[] = [];
+		const _storageObject = (
+			this.config.customEnabled ? await BuildStorageObjectFromCustom(this.SimpleInstance._data, this) : window.localStorage
+		) as StorageObject<T>;
 
-		// Check first if there is a localstorage value present to update the core
-		// for loop every key in the root
-		for (let item of Object.values(this.SimpleInstance._data)) {
-			// check if the persistence includes the key name
-			if ((this.persistance as string[]).includes(item._name)) {
-				item._peristed = true;
-
-				// Check if the key value is present in the local storage and update the core data
-				const localstoragevalue = await this.get(item._name);
-				const dataValue = this.SimpleInstance._data[item._value];
-
-				// If the key is not present in the storage, add to the list for update
-				if (localStorage['_simple_' + item._name] === undefined) {
-					coreToStorageUpdate.push(item._name);
-				}
-
-				// Check if the local storage is the same as the default key value
-				else if (localstoragevalue !== dataValue) {
-					item.setValue(localstoragevalue);
-				}
-			}
-		}
-
-		// Update the localstorage data from the list we got to update from the core data
+		// Update the core from storage object
 		for (let item of this.persistance) {
-			if (coreToStorageUpdate.includes(item as string)) {
-				const keyName = item as string;
-				this.set(keyName, this.SimpleInstance._data[keyName]._value);
+			this.SimpleInstance._data[item].setValue(_storageObject[item]);
+			this.SimpleInstance._data[item]._peristed = true;
+
+			// if storage object is null re instiate the core value to storage
+			if (_storageObject[item] === null) {
+				this.set(item as string, this.SimpleInstance._data[item]._value);
 			}
 		}
 	}
 
-	public async set(key: string, value: any) {
+	public async set(key: string, value: any): Promise<void> {
 		if (this.config?.customEnabled) {
 			await this.config.custom.set('_simple_' + key, JSON.stringify(value));
 		} else {
@@ -76,7 +62,7 @@ export class StorageController<T extends object> {
 		}
 	}
 
-	public async get(key: string) {
+	public async get(key: string): Promise<any> {
 		if (this.config?.customEnabled) {
 			return JSON.parse(await this.config.custom.get('_simple_' + key));
 		} else {

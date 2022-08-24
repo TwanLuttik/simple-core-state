@@ -1,6 +1,6 @@
 import { State } from './state';
 import { ContainerController } from './container';
-import { InitilizeOptions } from './types';
+import { DataType, InitilizeOptions } from './types';
 import { StorageController } from './storage';
 
 export class Simple<T extends object> {
@@ -8,7 +8,7 @@ export class Simple<T extends object> {
 	public storage: StorageController<T>;
 
 	// internal data store object
-	public _data: { [K in keyof T]: State<T[K]> } | {} = {};
+	public _data: DataType<T> = Object.create({});
 
 	constructor(defaultStructure: { [K in keyof T]: any }, c?: InitilizeOptions) {
 		this.bindToGlobal();
