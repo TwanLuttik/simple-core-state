@@ -1,6 +1,6 @@
 import { Simple } from './simple';
 import { DataType, StorageConfig } from './types';
-import { BuildStorageObjectFromCustom } from './utils';
+import { BuildStorageObjectFromCustom, parseWindowLocalStorageToMap } from './utils';
 
 type DataToKeysArray<T> = (keyof DataType<T>)[];
 type StorageObject<T> = { [K in keyof T]: K };
@@ -35,17 +35,26 @@ export class StorageController<T extends object> {
 
 	private async initializeStorageWithCore() {
 		const _storageObject = (
-			this.config.customEnabled ? await BuildStorageObjectFromCustom(this.SimpleInstance._data, this) : window.localStorage
+			this.config.customEnabled ? await BuildStorageObjectFromCustom(this.SimpleInstance._data, this) : parseWindowLocalStorageToMap(this.SimpleInstance._data)
 		) as StorageObject<T>;
 
-		// Update the core from storage object
-		for (let item of this.persistance) {
-			this.SimpleInstance._data[item].setValue(_storageObject[item]);
-			this.SimpleInstance._data[item]._peristed = true;
+		// go trough the core
+		for (let item of Object.entries(this.SimpleInstance._data)) {
+			const coreKeyName = item[0] as never;
+			const storageKeyValue = _storageObject[coreKeyName];
 
-			// if storage object is null re instiate the core value to storage
-			if (_storageObject[item] === null) {
-				this.set(item as string, this.SimpleInstance._data[item]._value);
+			// Check if we a re persisting the key name
+			if (this.persistance.includes(coreKeyName)) {
+				// Tell the state that this is a persited value
+				this.SimpleInstance._data[coreKeyName]._peristed = true;
+
+				// we need to update the key from the core with the storage object
+				// Check if the storage object key is null
+				if (storageKeyValue === undefined || storageKeyValue === null) {
+					this.set(coreKeyName, item[1]._value);
+				} else {
+					this.SimpleInstance._data[coreKeyName].setValue(storageKeyValue);
+				}
 			}
 		}
 	}
