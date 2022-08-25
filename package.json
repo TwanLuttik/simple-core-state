@@ -1,7 +1,7 @@
 {
 	"name": "simple-core-state",
 	"description": "A simple core state manager for react",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"license": "MIT",
