@@ -2,7 +2,7 @@ import { SimpleInstance } from './instance';
 
 export class State<valueType = any> {
 	public _name: string;
-	public _value: valueType = null;
+	public _value: valueType = undefined;
 	public _peristed: boolean = false;
 
 	constructor(key: string) {
@@ -13,13 +13,18 @@ export class State<valueType = any> {
 	 * @description Update the value
 	 * @param newValue
 	 */
-	public setValue(newValue: valueType) {
-		this._value = newValue;
+
+	public set(newValue: valueType | ((oldState: valueType) => valueType)) {
+		// Check for a callback set state
+		if (typeof newValue === 'function') {
+			// @ts-ignore TODO: FIX THIS TYPING
+			this._value = newValue(this._value);
+		} else {
+			this._value = newValue;
+		}
 
 		// Check if we need to persist
-		if (this._peristed) {
-			SimpleInstance().storage.set(this._name, this._value);
-		}
+		this.persistCheck();
 
 		SimpleInstance().containerController.triggerReRender(this._name);
 	}
@@ -51,10 +56,27 @@ export class State<valueType = any> {
 		}
 
 		// Check if we need to persist
+		this.persistCheck();
+
+		SimpleInstance().containerController.triggerReRender(this._name);
+	}
+
+	/**
+	 * @description Reset the state to its original value defined by the core
+	 */
+	public reset() {
+		// Get the default value from the default struct of the instance
+		this._value = SimpleInstance().defaultStructure[this._name];
+
+		// Check if we need to persist
+		this.persistCheck();
+
+		SimpleInstance().containerController.triggerReRender(this._name);
+	}
+
+	private persistCheck() {
 		if (this._peristed) {
 			SimpleInstance().storage.set(this._name, this._value);
 		}
-
-		SimpleInstance().containerController.triggerReRender(this._name);
 	}
 }

@@ -53,7 +53,7 @@ export class StorageController<T extends object> {
 				if (storageKeyValue === undefined || storageKeyValue === null) {
 					this.set(coreKeyName, item[1]._value);
 				} else {
-					this.SimpleInstance._data[coreKeyName].setValue(storageKeyValue);
+					this.SimpleInstance._data[coreKeyName].set(storageKeyValue);
 				}
 			}
 		}

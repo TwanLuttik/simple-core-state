@@ -12,3 +12,5 @@ export type StorageConfig = {
 };
 
 export type DataType<T> = { [K in keyof T]: State<T[K]> };
+
+export type CoreTypeFlatValue<T> = { [K in keyof T]: T[K] };
