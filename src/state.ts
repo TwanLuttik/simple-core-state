@@ -33,7 +33,7 @@ export class State<valueType = any> {
 	 * @description Update a key in an object (only support for object)
 	 * @param newValue
 	 */
-	public patchObject(newValue: Partial<{ [K in keyof valueType] }>) {
+	public patchObject(newValue: Partial<{ [K in keyof valueType]: valueType[K] }>) {
 		// Check if the current value is an object
 		if (typeof this._value !== 'object') {
 			throw `Can't patch a non object key`;
