@@ -7,7 +7,6 @@ export class Simple<T extends object> {
 	public containerController: ContainerController;
 	public storage: StorageController<T>;
 	public defaultStructure: CoreTypeFlatValue<T>;
-
 	// internal data store object
 	public _data: DataType<T> = Object.create({});
 
@@ -16,7 +15,7 @@ export class Simple<T extends object> {
 
 		// initialize container controller that handles the re renders for useSimple hook
 		this.containerController = new ContainerController(this);
-		this.storage = new StorageController(this, c?.Storage);
+		this.storage = new StorageController(this, c?.storage);
 
 		// save the default structure as a flat map
 		this.defaultStructure = defaultStructure;
@@ -30,6 +29,7 @@ export class Simple<T extends object> {
 		}
 	}
 
+	// Easy and a clean way to access the core object without any other function that comes with the instance
 	public core() {
 		return this._data as { [K in keyof T]: State<T[K]> };
 	}
