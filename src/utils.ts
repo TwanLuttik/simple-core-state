@@ -1,5 +1,6 @@
 import { DataType } from './types';
 import { StorageController } from './storage';
+import { SimpleInstance } from './instance';
 
 /**
  * @description Build an k/v object from the custom storage integration
@@ -21,10 +22,10 @@ export const parseWindowLocalStorageToMap = (data: DataType<any>) => {
 	let newObj = {};
 
 	for (let item of Object.entries(data)) {
-		if (window.localStorage['_simple_' + item[0]] === undefined) {
+		if (window.localStorage[SimpleInstance().storage._prefixKey + item[0]] === undefined) {
 			newObj[item[0]] = undefined;
 		} else {
-			newObj[item[0]] = JSON.parse(window.localStorage['_simple_' + item[0]]);
+			newObj[item[0]] = JSON.parse(window.localStorage[SimpleInstance().storage._prefixKey + item[0]]);
 		}
 	}
 

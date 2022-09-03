@@ -37,8 +37,12 @@ const defaultCore = {
 
 // Initialize the core
 export const stateManager = new SimpleCore<ICoreType>(defaultCore, {
-  // For now if you are on react-native or if you wanna use you're own storage Library, than you can implement by passing the custom storage object with a get and set function
+  // Storage configurations
   Storage: {
+    // You can se a custom prefix for the storage, the default is ['_simple' + _keyname]
+    prefix: 'customPrefix',
+    
+    // Support other storage library's for such cases as for React Native
     custom: {
       async get(key) {
         return await AnotherStorageLib.get(key);
@@ -81,7 +85,11 @@ export const App = () => {
 
   return (
     <div>
+      // Display the value
       <p>{theme}</p>
+
+      // Update the value
+      <button onClick={() => core.currentTheme.set('light')}>Update</button>
     </div>
   );
 };

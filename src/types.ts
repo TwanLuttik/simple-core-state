@@ -5,9 +5,10 @@ export interface InitilizeOptions {
 }
 
 export type StorageConfig = {
+	prefix?: string;
 	custom?: {
-		get: (key: string) => Promise<any>;
-		set: (key: string, value: any) => Promise<void>;
+		get: (key: string) => Promise<any> | any;
+		set: (key: string, value: any) => Promise<void> | void;
 	};
 };
 
