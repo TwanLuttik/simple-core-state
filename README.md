@@ -38,7 +38,7 @@ const defaultCore = {
 // Initialize the core
 export const stateManager = new SimpleCore<ICoreType>(defaultCore, {
   // Storage configurations
-  Storage: {
+  storage: {
     // You can se a custom prefix for the storage, the default is ['_simple' + _keyname]
     prefix: 'customPrefix',
     
