@@ -1,6 +1,6 @@
 import { State } from './state';
 import { ContainerController } from './container';
-import { CoreTypeFlatValue, DataType, InitilizeOptions } from './types';
+import { CoreTypeFlatValue, DataToKeysArray, DataType, InitilizeOptions } from './types';
 import { StorageController } from './storage';
 
 export class Simple<T extends object> {
@@ -32,6 +32,14 @@ export class Simple<T extends object> {
 
 	public core() {
 		return this._data as { [K in keyof T]: State<T[K]> };
+	}
+
+	// Register the keys that will be persisted
+	public persist(keys: DataToKeysArray<T>) {
+		this.storage.persistance = keys;
+
+		// this will sync up the core with storage and reversed in order
+		this.storage.initializeStorageWithCore();
 	}
 
 	// Bind the instance to the global window

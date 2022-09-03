@@ -1,9 +1,6 @@
 import { Simple } from './simple';
-import { DataType, StorageConfig } from './types';
+import { DataToKeysArray, StorageConfig, StorageObject } from './types';
 import { BuildStorageObjectFromCustom, parseWindowLocalStorageToMap } from './utils';
-
-type DataToKeysArray<T> = (keyof DataType<T>)[];
-type StorageObject<T> = { [K in keyof T]: K };
 
 export class StorageController<T extends object> {
 	public SimpleInstance: Simple<any>;
@@ -25,15 +22,8 @@ export class StorageController<T extends object> {
 		}
 	}
 
-	// register which keys need to be persisted
-	public perist(keys: DataToKeysArray<T>) {
-		this.persistance = keys;
-
-		// this will sync up the core with storage and reversed in order
-		this.initializeStorageWithCore();
-	}
-
-	private async initializeStorageWithCore() {
+	// Sync up the core from the storage when the app is starting up
+	public async initializeStorageWithCore() {
 		const _storageObject = (
 			this.config.customEnabled ? await BuildStorageObjectFromCustom(this.SimpleInstance._data, this) : parseWindowLocalStorageToMap(this.SimpleInstance._data)
 		) as StorageObject<T>;

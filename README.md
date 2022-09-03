@@ -51,7 +51,7 @@ export const stateManager = new SimpleCore<ICoreType>(defaultCore, {
 });
 
 // Persist values by an array with keys
-stateManager.storage.perist(['currentTheme', 'lastUpdate']);
+stateManager.perist(['currentTheme', 'lastUpdate']);
 
 // Export the core for easy access to hooks and updates and etc
 export const core = stateManager.core();
