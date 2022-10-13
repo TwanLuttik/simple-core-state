@@ -1,12 +1,16 @@
-import { SimpleInstance } from './instance';
+import { Simple } from './simple';
 
 export class State<valueType = any> {
+	private instance: Simple<any>;
 	public _name: string;
 	public _value: valueType = undefined;
 	public _peristed: boolean = false;
+	public _default: valueType;
 
-	constructor(key: string) {
+	constructor(instance: Simple<any>, key: string, value: any) {
+		this.instance = instance;
 		this._name = key;
+		this._default = value;
 	}
 
 	/**
@@ -26,7 +30,7 @@ export class State<valueType = any> {
 		// Check if we need to persist
 		this.persistCheck();
 
-		SimpleInstance().containerController.triggerReRender(this._name);
+		this.instance.containerController.triggerReRender(this._name);
 	}
 
 	/**
@@ -45,11 +49,10 @@ export class State<valueType = any> {
 		}
 
 		// loop trough the k/v to patch the keys in the object
-		for (let k of Object.entries(newValue)) {
+		for (const k of Object.entries(newValue)) {
 			if (this._value === null) {
-				// TODO: Fix this typing
-				// @ts-ignore
-				this._value = { [k[0]]: k[1] };
+				const x = { [k[0]]: k[1] } as any;
+				this._value = x;
 			} else {
 				this._value[k[0]] = k[1];
 			}
@@ -58,7 +61,7 @@ export class State<valueType = any> {
 		// Check if we need to persist
 		this.persistCheck();
 
-		SimpleInstance().containerController.triggerReRender(this._name);
+		this.instance.containerController.triggerReRender(this._name);
 	}
 
 	/**
@@ -66,17 +69,17 @@ export class State<valueType = any> {
 	 */
 	public reset() {
 		// Get the default value from the default struct of the instance
-		this._value = SimpleInstance().defaultStructure[this._name];
+		this._value = this._default;
 
 		// Check if we need to persist
 		this.persistCheck();
 
-		SimpleInstance().containerController.triggerReRender(this._name);
+		this.instance.containerController.triggerReRender(this._name);
 	}
 
 	private persistCheck() {
 		if (this._peristed) {
-			SimpleInstance().storage.set(this._name, this._value);
+			this.instance.storage.set(this._name, this._value);
 		}
 	}
 }
