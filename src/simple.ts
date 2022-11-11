@@ -2,13 +2,13 @@ import { State } from './state';
 import { ContainerController } from './container';
 import { CoreTypeFlatValue, DataToKeysArray, DataType, InitilizeOptions } from './types';
 import { StorageController } from './storage';
-import { Events } from './events';
+import { EventController } from './events';
 
 export class Simple<T extends object> {
 	public containerController: ContainerController;
 	public storage: StorageController<T>;
 	public defaultStructure: CoreTypeFlatValue<T>;
-	public events: Events<any>;
+	public events: EventController;
 
 	// internal data store object
 	public _data: DataType<T> = Object.create({});
@@ -19,7 +19,7 @@ export class Simple<T extends object> {
 		// initialize container controller that handles the re renders for useSimple hook
 		this.containerController = new ContainerController(this);
 		this.storage = new StorageController(this, c?.storage);
-		this.events = new Events(this);
+		this.events = new EventController(this);
 
 		// save the default structure as a flat map
 		this.defaultStructure = Object.assign(incomingStruct, {});
@@ -36,7 +36,7 @@ export class Simple<T extends object> {
 
 	// Easy and a clean way to access the core object without any other function that comes with the instance
 	public core() {
-		return { ...(this._data as { [K in keyof T]: State<T[K]> }), _events: this.events.mappedEvents() };
+		return { ...(this._data as { [K in keyof T]: State<T[K]> }), _events: this.events.eventsRegistryList as any };
 	}
 
 	public reset() {

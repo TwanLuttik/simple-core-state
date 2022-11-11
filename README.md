@@ -1,4 +1,4 @@
-# Simple Core State 0.0.9
+# Simple Core State 0.0.10
 
 _This Library is still work in progress_
 
@@ -109,6 +109,44 @@ export const App = () => {
 	// custom_event is the name of the event we have created with (instance.event.register('name_event');)
 	useEffect(core._events.custom_event, (data) => {
 		console.log(`receving event with data: `, data);
+	});
+
+	return <div></div>;
+};
+```
+
+<br/>
+<br/>
+
+# Events _(🚧 under development)_
+
+A few side notes since this future is still under development and testing:
+
+- Registered events are not typed by name `core._events`
+
+<br/>
+<br/>
+
+1. Create your event name
+
+```ts
+const instance = new Simple(...);
+
+instance.events.create(['someName', 'multiple_events']);
+```
+
+<br/>
+
+2.  Create the listener
+
+```jsx
+import React from 'react';
+import { myCore } from './core.ts';
+import { useSimpleEvent } from 'simple-core-state';
+
+export const App = () => {
+	useSimpleEvent(core._events.test, (e) => {
+		// You're logic here
 	});
 
 	return <div></div>;

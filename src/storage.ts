@@ -11,7 +11,7 @@ export class StorageController<T extends object> {
 
 	constructor(instance: Simple<any>, con?: StorageConfig) {
 		this.SimpleInstance = instance;
-		
+
 		// Set the custom prefix
 		if (con?.prefix) this._prefixKey = con.prefix;
 
@@ -60,6 +60,7 @@ export class StorageController<T extends object> {
 			await this.config.custom.set(this._prefixKey + key, JSON.stringify(value));
 		} else {
 			if (window?.localStorage) {
+				if (value === undefined) value = null;
 				localStorage.setItem(this._prefixKey + key, JSON.stringify(value));
 			} else {
 				throw 'Default storage instance not found';

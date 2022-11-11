@@ -1,67 +1,62 @@
 import { Simple } from './simple';
-import { EventMap } from './types';
+import { DataCallback } from './types';
+import { makeid } from './utils';
 
-export class Events<T extends Simple<T>> {
-	private instance: Simple<any>;
+/**
+ * This is the main controller that controls all the events and etc of the underlaying structure
+ */
+export class EventController {
+	private rootInstance: Simple<any>;
+	eventsRegistryList = Object.create({});
 
-	// List of the event listeners registered across the application
-	public eventContainers: EventMap<T> = Object.create({});
-
-	constructor(simpleInstance: Simple<any>) {
-		this.instance = simpleInstance;
+	constructor(rootInstance: Simple<any>) {
+		this.rootInstance = rootInstance;
 	}
 
-	public register(names: string[]) {
-		for (let name of names) {
-			const eventContainerInstance = new EventContainer(this, name, () => {});
-			this.eventContainers[name as typeof name] = eventContainerInstance;
+	public create(names: string[]) {
+		for (const item of names) {
+			const eventInstance = new EventRegistry(this, item);
+			this.eventsRegistryList[item] = eventInstance;
 		}
-		return names;
-	}
-
-	public renderContainer(name: string, payload?: any) {
-		Object.entries(this.eventContainers).forEach((e) => {
-			if (e[1].eventName === name) {
-				e[1].eventListeners.forEach((el) => {
-					el(payload);
-				});
-			}
-		});
-	}
-
-	public mappedEvents() {
-		return this.eventContainers as typeof this.eventContainers;
 	}
 }
 
 /**
- * @description Container that handles the re render for any state changes
+ * This controls a event by name that will holds all of its registered listeners and etc
  */
-export class EventContainer {
-	public eventInstance: Events<any>;
-	public callback: Function;
-	public eventName: string;
+export class EventRegistry {
+	instance: EventController;
+	eventName: string;
 
-	public eventListeners = new Set<Function>();
+	public listeners: { [key: string]: EventRegistryListener } = Object.create({});
 
-	constructor(instance: Events<any>, eventName: string, callback: () => void) {
-		this.eventInstance = instance;
-		this.eventName = eventName;
-		this.callback = callback;
+	constructor(instance: EventController, registryName: string) {
+		this.instance = instance;
+		this.eventName = registryName;
 	}
 
-	public on(callback: (v: any) => void) {
-		this.eventListeners.add(callback);
-		this.callback = callback;
-		return this;
+	// Create the istener and return q
+	public createListener(cb: (data: any) => void): string {
+		const id = makeid(5);
+		this.listeners[id] = new EventRegistryListener(cb);
+		return id;
 	}
 
-	public removeListener(containerInstance: EventContainer) {
-		this.eventListeners.delete(containerInstance.callback);
+	public removeListener(id: string) {
+		delete this.listeners[id];
 	}
 
-	public emit(payload: any) {
-		// Render the container from its parent instance
-		this.eventInstance.renderContainer(this.eventName, payload);
+	public send(data: any) {
+		for (const listItem of Object.entries(this.listeners)) {
+			listItem[1].callback(data);
+		}
+	}
+}
+
+class EventRegistryListener {
+	callback: DataCallback;
+
+	constructor(cb: DataCallback) {
+		this.callback = cb;
 	}
 }
