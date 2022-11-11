@@ -59,8 +59,6 @@ export const instance = new SimpleCore<ICoreType>(defaultCore, {
 // Persist values by an array with keys
 instance.perist(['currentTheme', 'lastUpdate']);
 
-instance.event.register('custom_event');
-
 // Export the core for easy access to hooks and updates and etc
 export const core = instance.core();
 
@@ -98,20 +96,6 @@ export const App = () => {
 			<button onClick={() => core.currentTheme.set('light')}>Update</button>
 		</div>
 	);
-};
-```
-
-```jsx
-import { useEvent } from 'simple-state-core';
-import { core } from './somefile';
-
-export const App = () => {
-	// custom_event is the name of the event we have created with (instance.event.register('name_event');)
-	useEffect(core._events.custom_event, (data) => {
-		console.log(`receving event with data: `, data);
-	});
-
-	return <div></div>;
 };
 ```
 
