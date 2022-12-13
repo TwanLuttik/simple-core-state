@@ -1,4 +1,4 @@
-# Simple Core State 0.0.10
+# Simple Core State 0.0.11
 
 _This Library is still work in progress_
 
@@ -29,12 +29,20 @@ interface ICoreType {
 	account: { email: string; id: string } | null;
 	currentTheme: 'light' | 'dark';
 	lastUpdate: number | null;
+	app: {
+		running: boolean;
+		run_time: number;
+	};
 }
 
 const defaultCore = {
 	account: null,
 	currentTheme: 'light',
 	lastUpdate: 1,
+	app: {
+		running: false,
+		run_time: 453543543,
+	},
 };
 
 // Initialize the core
@@ -73,6 +81,9 @@ core.currentTheme.reset();
 
 // Update a key from an object
 core.account.patch({ id: '37a7ce20-7250-4a40-b683-3cb0a848c2b9' });
+
+// Update a key of the object from its value itself
+core.app.updatePiece('running', true);
 ```
 
 <br>

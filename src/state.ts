@@ -64,6 +64,19 @@ export class State<valueType = any> {
 		this.instance.containerController.triggerReRender(this._name);
 	}
 
+	public updatePiece<T extends keyof valueType, X extends valueType>(key: T, value: X[T]) {
+		// check if its a object
+		if (typeof this._value !== 'object') throw 'Object type required';
+
+		// Update only the key of that part
+		this._value = { ...this._value, [key]: value };
+
+		// Update the subsribers of app_state
+		this.persistCheck();
+
+		this.instance.containerController.triggerReRender(this._name);
+	}
+
 	/**
 	 * @description Reset the state to its original value defined by the core
 	 */
