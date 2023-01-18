@@ -64,7 +64,7 @@ export class State<valueType = any> {
 		this.instance.containerController.triggerReRender(this._name);
 	}
 
-	public updatePiece<T extends keyof valueType, X extends valueType>(key: T, value: X[T]) {
+	public updatePiece<T extends keyof valueType, X extends valueType>(key: T, value: Partial<X[T]>) {
 		// check if its a object
 		if (typeof this._value !== 'object') throw 'Object type required';
 
