@@ -4,7 +4,7 @@ import { BuildStorageObjectFromCustom, parseWindowLocalStorageToMap } from './ut
 
 export class StorageController<T extends object> {
 	public SimpleInstance: Simple<any>;
-	public persistance: DataToKeysArray<T> | [] = [];
+	public persistence_keys: DataToKeysArray<T> | [] = [];
 	public enalbed: boolean = false;
 	public config: StorageConfig & { customEnabled: boolean } = { customEnabled: false };
 	public _prefixKey = '_simple_';
@@ -40,7 +40,7 @@ export class StorageController<T extends object> {
 			const storageKeyValue = _storageObject[coreKeyName];
 
 			// Check if we a re persisting the key name
-			if (this.persistance.includes(coreKeyName)) {
+			if (this.persistence_keys.includes(coreKeyName)) {
 				// Tell the state that this is a persited value
 				this.SimpleInstance._data[coreKeyName]._peristed = true;
 

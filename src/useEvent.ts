@@ -1,10 +1,6 @@
-import React, { ClassAttributes } from 'react';
+import React from 'react';
 import { EventRegistry } from './events';
-import { SimpleInstance } from './instance';
-import { Simple } from './simple';
 
-// type TestPropType<T extends Simple<T>> = Events<T>['eventContainers'];
-// EventContainer | (keyof TestPropType<any>)[]
 export const useSimpleEvent = (eventInstance: EventRegistry, callback: (data: any) => void) => {
 	const [_, set_] = React.useState({});
 

@@ -24,3 +24,8 @@ export type StorageObject<T> = { [K in keyof T]: K };
 export type EventMap<T> = { [K in keyof T]: EventRegistry };
 
 export type DataCallback = (data: any) => void;
+
+export type EventListRegistryType<T> = { [K in keyof T]: EventRegistry };
+
+export type defaultStructIn<T> = Partial<{ [K in keyof T]: T[K] }>;
+ 

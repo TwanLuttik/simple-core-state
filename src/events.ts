@@ -1,17 +1,14 @@
 import { Simple } from './simple';
-import { DataCallback } from './types';
+import { DataCallback, EventListRegistryType } from './types';
 import { makeid } from './utils';
 
 /**
  * This is the main controller that controls all the events and etc of the underlaying structure
  */
-export class EventController {
-	private rootInstance: Simple<any>;
-	eventsRegistryList = Object.create({});
+export class EventController<T> {
+	eventsRegistryList: EventListRegistryType<T> = Object.create({});
 
-	constructor(rootInstance: Simple<any>) {
-		this.rootInstance = rootInstance;
-	}
+	constructor(rootInstance: Simple<any>) {}
 
 	public create(names: string[]) {
 		for (const item of names) {
@@ -25,12 +22,12 @@ export class EventController {
  * This controls a event by name that will holds all of its registered listeners and etc
  */
 export class EventRegistry {
-	instance: EventController;
+	instance: EventController<any>;
 	eventName: string;
 
 	public listeners: { [key: string]: EventRegistryListener } = Object.create({});
 
-	constructor(instance: EventController, registryName: string) {
+	constructor(instance: EventController<any>, registryName: string) {
 		this.instance = instance;
 		this.eventName = registryName;
 	}
@@ -46,9 +43,10 @@ export class EventRegistry {
 		delete this.listeners[id];
 	}
 
-	public send(data: any) {
+	// Accept mutliple arguments for sending data
+	public send(...args: any) {
 		for (const listItem of Object.entries(this.listeners)) {
-			listItem[1].callback(data);
+			listItem[1].callback(args);
 		}
 	}
 }

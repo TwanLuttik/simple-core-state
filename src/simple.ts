@@ -1,19 +1,20 @@
 import { State } from './state';
 import { ContainerController } from './container';
-import { CoreTypeFlatValue, DataToKeysArray, DataType, InitilizeOptions } from './types';
+import { CoreTypeFlatValue, DataToKeysArray, DataType, InitilizeOptions, defaultStructIn } from './types';
 import { StorageController } from './storage';
-import { EventController } from './events';
+import { EventController, EventRegistry } from './events';
+
 
 export class Simple<T extends object> {
 	public containerController: ContainerController;
 	public storage: StorageController<T>;
-	public defaultStructure: CoreTypeFlatValue<T>;
-	public events: EventController;
+	public defaultStructure: Partial<CoreTypeFlatValue<T>>;
+	public events: EventController<T>;
 
 	// internal data store object
 	public _data: DataType<T> = Object.create({});
 
-	constructor(incomingStruct: { [K in keyof T]: T[K] }, c?: InitilizeOptions) {
+	constructor(incomingStruct: defaultStructIn<T>, c?: InitilizeOptions) {
 		this.bindToGlobal();
 
 		// initialize container controller that handles the re renders for useSimple hook
@@ -36,7 +37,10 @@ export class Simple<T extends object> {
 
 	// Easy and a clean way to access the core object without any other function that comes with the instance
 	public core() {
-		return { ...(this._data as { [K in keyof T]: State<T[K]> }), _events: this.events.eventsRegistryList as any };
+		return {
+			...(this._data as { [K in keyof T]: State<T[K]> }),
+			_events: this.events.eventsRegistryList as { [key: string]: EventRegistry },
+		};
 	}
 
 	public reset() {
@@ -47,7 +51,7 @@ export class Simple<T extends object> {
 
 	// Register the keys that will be persisted
 	public persist(keys: DataToKeysArray<T>) {
-		this.storage.persistance = keys;
+		this.storage.persistence_keys = keys;
 
 		// this will sync up the core with storage and reversed in order
 		this.storage.initializeStorageWithCore();
@@ -55,8 +59,8 @@ export class Simple<T extends object> {
 
 	// Bind the instance to the global window
 	private bindToGlobal() {
-		if (!globalThis['__Simple__']) {
-			globalThis['__Simple__'] = this;
+		if (!globalThis['Simple_']) {
+			globalThis['Simple_'] = this;
 		}
 	}
 }

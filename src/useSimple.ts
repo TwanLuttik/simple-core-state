@@ -1,6 +1,6 @@
+import React from 'react';
 import { State } from './state';
 import { SimpleInstance } from './instance';
-import React from 'react';
 
 type SimpleValue<T> = State<T>;
 
