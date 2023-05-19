@@ -1,13 +1,13 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { State } from './state';
 import { SimpleInstance } from './instance';
 
 type SimpleValue<T> = State<T>;
 
 export function useSimple<T>(state: SimpleValue<T>) {
-	const [_, set_] = React.useState({});
+	const [_, set_] = useState({});
 
-	React.useEffect(function () {
+	useEffect(function () {
 		const subContainerInstance = SimpleInstance().containerController.subscribe(state, () => {
 			set_({});
 		});

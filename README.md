@@ -1,4 +1,4 @@
-# Simple Core State 0.0.12
+# Simple Core State 0.0.16
 
 _This Library is still work in progress_
 
@@ -115,11 +115,6 @@ export const App = () => {
 
 # Events _(🚧 under development)_
 
-A few side notes since this future is still under development and testing:
-
-- Registered events are not typed by name `core._events`
-
-<br/>
 <br/>
 
 1. Create your event name
@@ -134,7 +129,7 @@ instance.events.create(['someName', 'multiple_events']);
 
 2.  Create the listener
 
-```jsx
+```tsx
 import React from 'react';
 import { myCore } from './core.ts';
 import { useSimpleEvent } from 'simple-core-state';
@@ -146,4 +141,13 @@ export const App = () => {
 
 	return <div></div>;
 };
+```
+
+<br />
+
+3. Sending Data
+
+```ts
+// Supports sending multiple arguments
+core._events.test.send('some value');
 ```

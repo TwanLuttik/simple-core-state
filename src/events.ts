@@ -32,7 +32,7 @@ export class EventRegistry {
 		this.eventName = registryName;
 	}
 
-	// Create the istener and return q
+	// Create the istener and return
 	public createListener(cb: (data: any) => void): string {
 		const id = makeid(5);
 		this.listeners[id] = new EventRegistryListener(cb);
@@ -44,9 +44,10 @@ export class EventRegistry {
 	}
 
 	// Accept mutliple arguments for sending data
-	public send(...args: any) {
+	public send(...args: any[]) {
 		for (const listItem of Object.entries(this.listeners)) {
-			listItem[1].callback(args);
+			// If there is only 1 argument we are not sending it as a array
+			listItem[1].callback(args.length === 1 ? args[0] : args);
 		}
 	}
 }
