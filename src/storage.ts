@@ -3,14 +3,14 @@ import { DataToKeysArray, StorageConfig, StorageObject } from './types';
 import { BuildStorageObjectFromCustom, parseWindowLocalStorageToMap } from './utils';
 
 export class StorageController<T extends object> {
-	public SimpleInstance: Simple<any>;
+	public simpleInstance: Simple<any>;
 	public persistence_keys: DataToKeysArray<T> | [] = [];
-	public enalbed: boolean = false;
+	public enabled: boolean = false;
 	public config: StorageConfig & { customEnabled: boolean } = { customEnabled: false };
 	public _prefixKey = '_simple_';
 
 	constructor(instance: Simple<any>, con?: StorageConfig) {
-		this.SimpleInstance = instance;
+		this.simpleInstance = instance;
 
 		// Set the custom prefix
 		if (con?.prefix) this._prefixKey = con.prefix;
@@ -26,30 +26,35 @@ export class StorageController<T extends object> {
 		}
 	}
 
-	// Sync up the core from the storage when the app is starting up
+	/**
+	 * @description Update the core from the storage assigned by a list of keys
+	 */
 	public async initializeStorageWithCore() {
 		const _storageObject = (
 			this.config.customEnabled
-				? await BuildStorageObjectFromCustom(this.SimpleInstance._data, this)
-				: parseWindowLocalStorageToMap(this.SimpleInstance._data)
+				? await BuildStorageObjectFromCustom(this.simpleInstance._data, this)
+				: parseWindowLocalStorageToMap(this.simpleInstance._data)
 		) as StorageObject<T>;
 
+		// TODO: fix persistence_keys typings so its a string
+		const persistendItemsKeys = Object.entries(this.simpleInstance._data).filter((x) => !!this.persistence_keys.includes(x[1]._name as never));
+
 		// go trough the core
-		for (let item of Object.entries(this.SimpleInstance._data)) {
+		for (let item of persistendItemsKeys) {
 			const coreKeyName = item[0] as never;
 			const storageKeyValue = _storageObject[coreKeyName];
 
 			// Check if we a re persisting the key name
 			if (this.persistence_keys.includes(coreKeyName)) {
 				// Tell the state that this is a persited value
-				this.SimpleInstance._data[coreKeyName]._peristed = true;
+				this.simpleInstance._data[coreKeyName]._peristed = true;
 
 				// we need to update the key from the core with the storage object
 				// Check if the storage object key is null
 				if (storageKeyValue === undefined || storageKeyValue === null) {
 					this.set(coreKeyName, item[1]._value);
 				} else {
-					this.SimpleInstance._data[coreKeyName].set(storageKeyValue);
+					this.simpleInstance._data[coreKeyName].set(storageKeyValue);
 				}
 			}
 		}
