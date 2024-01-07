@@ -4,7 +4,6 @@ import { CoreTypeFlatValue, DataToKeysArray, DataType, InitilizeOptions, default
 import { StorageController } from './storage';
 import { EventController, EventRegistry } from './events';
 
-
 export class Simple<T extends object> {
 	public containerController: ContainerController;
 	public storage: StorageController<T>;
@@ -43,9 +42,19 @@ export class Simple<T extends object> {
 		};
 	}
 
+	/**
+	 * @description this will reset thw whole core to its default value('s)
+	 * TODO: Figure out if we need to re-render every component by looping trough or there is a react batch call function?
+	 */
 	public reset() {
 		for (const i of Object.entries(this._data)) {
-			this._data[i[0]].reset();
+			this._data[i[0]]._value = this._data[i[0]]._default;
+			this._data[i[0]].persistCheck();
+		}
+
+		for (const i of Object.entries(this._data)) {
+			this._data[i[0]]._value = this._data[i[0]]._default;
+			this.containerController.triggerReRender(this._data[i[0]]._name);
 		}
 	}
 
