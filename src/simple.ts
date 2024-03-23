@@ -13,12 +13,14 @@ export class Simple<T extends object> {
 	// internal data store object
 	public _data: DataType<T> = Object.create({});
 
-	constructor(incomingStruct: defaultStructIn<T>, c?: InitilizeOptions) {
+	constructor(incomingStruct: defaultStructIn<T>, init_config?: InitilizeOptions) {
 		this.bindToGlobal();
+
+		// Initialize storage
+		this.storage = new StorageController(this, init_config.storage);
 
 		// initialize container controller that handles the re renders for useSimple hook
 		this.containerController = new ContainerController(this);
-		this.storage = new StorageController(this, c?.storage);
 		this.events = new EventController(this);
 
 		// save the default structure as a flat map
@@ -48,14 +50,21 @@ export class Simple<T extends object> {
 	 */
 	public reset() {
 		for (const i of Object.entries(this._data)) {
+			console.log('default value of data', this._data[i[0]]._default);
+
 			this._data[i[0]]._value = this._data[i[0]]._default;
 			this._data[i[0]].persistCheck();
 		}
 
-		for (const i of Object.entries(this._data)) {
-			this._data[i[0]]._value = this._data[i[0]]._default;
-			this.containerController.triggerReRender(this._data[i[0]]._name);
-		}
+		// @ts-ignore
+		console.log(Object.entries(this._data)[0][1]._name);
+		// @ts-ignore
+		this.containerController.triggerReRender(Object.entries(this._data)[0][1]._name);
+
+		// for (const i of Object.entries(this._data)) {
+		// 	this._data[i[0]]._value = this._data[i[0]]._default;
+		// 	this.containerController.triggerReRender(this._data[i[0]]._name);
+		// }
 	}
 
 	// Register the keys that will be persisted

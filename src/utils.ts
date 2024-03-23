@@ -9,7 +9,14 @@ export const BuildStorageObjectFromCustom = async (data: DataType<any>, storage:
 	let newObj = {};
 
 	for (let item of Object.entries(data)) {
-		newObj[item[0]] = await storage.get(item[0]);
+		const keyName = item[1]._name;
+
+		const storageValue = await storage.get(keyName);
+		console.log('storageValue', storageValue);
+
+		if (storageValue !== undefined) {
+			newObj[keyName] = storageValue;
+		}
 	}
 
 	return newObj;

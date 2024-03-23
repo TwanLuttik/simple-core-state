@@ -3,8 +3,9 @@ import { Simple } from './simple';
 export class State<valueType = any> {
 	private instance: Simple<any>;
 	public _name: string;
-	public _value: valueType = undefined;
-	public _peristed: boolean = false;
+	public _value: valueType = null;
+	public _persist = false;
+	// TODO: make the default read only
 	public _default: valueType;
 	public _history: { date: Date; value: valueType }[] = [];
 
@@ -18,7 +19,6 @@ export class State<valueType = any> {
 	 * @description Update the value
 	 * @param newValue
 	 */
-
 	public set(newValue: valueType | ((oldState: valueType) => valueType)) {
 		// Check for a callback set state
 		if (typeof newValue === 'function') {
@@ -31,6 +31,7 @@ export class State<valueType = any> {
 		}
 
 		// Check if we need to persist
+		// if (this._value !== undefined) this.persistCheck();
 		this.persistCheck();
 
 		this.instance.containerController.triggerReRender(this._name);
@@ -122,7 +123,7 @@ export class State<valueType = any> {
 	}
 
 	private persistCheck() {
-		if (this._peristed) {
+		if (this._persist === true) {
 			this.instance.storage.set(this._name, this._value);
 		}
 	}
