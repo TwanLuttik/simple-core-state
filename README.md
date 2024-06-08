@@ -1,4 +1,4 @@
-# Simple Core State 0.0.18
+# Simple Core State 0.0.19
 
 _This Library is still work in progress_
 
