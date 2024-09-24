@@ -1,4 +1,4 @@
-# Simple Core State 0.0.19
+# Simple Core State
 
 _This Library is still work in progress_
 

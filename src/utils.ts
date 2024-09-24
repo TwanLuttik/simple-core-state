@@ -22,7 +22,9 @@ export const parseWindowLocalStorageToMap = (data: DataType<any>) => {
 	let newObj = {};
 
 	for (let item of Object.entries(data)) {
-		if (window.localStorage[SimpleInstance().storage._prefixKey + item[0]] === undefined) {
+		if (typeof window === 'undefined') {
+			newObj[item[0]] = undefined;
+		} else if (window.localStorage[SimpleInstance().storage._prefixKey + item[0]] === undefined) {
 			newObj[item[0]] = undefined;
 		} else {
 			newObj[item[0]] = JSON.parse(window.localStorage[SimpleInstance().storage._prefixKey + item[0]]);
