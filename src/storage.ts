@@ -64,12 +64,8 @@ export class StorageController<T extends object> {
 		if (this.config?.customEnabled) {
 			await this.config.custom.set(this._prefixKey + key, JSON.stringify(value));
 		} else {
-			if (typeof window !== 'undefined') {
-				if (value === undefined) value = null;
+			if (value === undefined) value = null;
 				localStorage.setItem(this._prefixKey + key, JSON.stringify(value));
-			} else {
-				throw 'Default storage instance not found';
-			}
 		}
 	}
 
@@ -77,11 +73,7 @@ export class StorageController<T extends object> {
 		if (this.config?.customEnabled) {
 			return JSON.parse(await this.config.custom.get(this._prefixKey + key));
 		} else {
-			if (typeof window !== 'undefined') {
-				return JSON.parse(localStorage.getItem(this._prefixKey + key));
-			} else {
-				throw 'Default storage instance not found';
-			}
+			throw 'Default storage instance not found';
 		}
 	}
 }

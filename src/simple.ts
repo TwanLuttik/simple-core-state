@@ -68,7 +68,7 @@ export class Simple<T extends object> {
 
 	// Bind the instance to the global window
 	private bindToGlobal() {
-		if (typeof window !== 'undefined' && !globalThis['Simple_']) {
+		if (!globalThis['Simple_']) {
 			globalThis['Simple_'] = this;
 		}
 	}

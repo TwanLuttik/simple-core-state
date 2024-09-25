@@ -19,16 +19,17 @@ export const BuildStorageObjectFromCustom = async (data: DataType<any>, storage:
  * @description Build an object with k/v from the window.localstorage and we need to parse if its not undefined
  */
 export const parseWindowLocalStorageToMap = (data: DataType<any>) => {
-	let newObj = {};
+	let newObj: { [index: string]: any } = {};
+
+	if (typeof window === 'undefined' || typeof window?.localStorage !== 'object') {
+		return newObj;
+	}
 
 	for (let item of Object.entries(data)) {
-		if (typeof window === 'undefined' || !window.localStorage) {
+		if (window.localStorage[SimpleInstance().storage._prefixKey + item[0]] === undefined) {
 			newObj[item[0]] = undefined;
 		} else {
-			const storageKey = SimpleInstance().storage._prefixKey + item[0];
-			newObj[item[0]] = window.localStorage[storageKey] !== undefined 
-				? JSON.parse(window.localStorage[storageKey]) 
-				: undefined;
+			newObj[item[0]] = JSON.parse(window.localStorage[SimpleInstance().storage._prefixKey + item[0]]);
 		}
 	}
 
