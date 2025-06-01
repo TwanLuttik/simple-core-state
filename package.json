@@ -1,7 +1,7 @@
 {
 	"name": "simple-core-state",
 	"description": "A simple core state manager for react",
-	"version": "0.0.29",
+	"version": "0.0.30",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"license": "MIT",
@@ -21,22 +21,27 @@
 		"state-manager"
 	],
 	"scripts": {
-		"build": "tsc --sourceMap false",
-		"dev-watch": "tsc --watch",
-		"watch": "nodemon -e js,ts --ignore dist --exec \"tsc --sourceMap && yalc push --changed\""
+		"build": "node ./node_modules/typescript/bin/tsc --declaration --outDir dist --sourceMap false",
+		"build:dev": "node ./node_modules/typescript/bin/tsc --sourceMap true",
+		"dev-watch": "node ./node_modules/typescript/bin/tsc --watch --sourceMap true",
+		"watch": "nodemon -e js,ts --ignore dist --exec \"node ./node_modules/typescript/bin/tsc --sourceMap && yalc push --changed\""
 	},
 	"files": [
 		"/dist/**/*"
 	],
 	"dependencies": {
-		"typescript": "^5.4.5"
+		"global": "^4.4.0",
+		"typescript": "^5.8.3"
 	},
 	"devDependencies": {
-		"@types/node": "^20.14.4",
+		"@types/node": "^22.15.29",
 		"@types/react": "^19",
-		"nodemon": "^3.1.0",
+		"nodemon": "^3.1.10",
+		"react-test-renderer": "^19.0.0",
+		"tsc": "^2.0.4"
+	},
+	"peerDependencies": {
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"react-test-renderer": "^19.0.0"
+		"react-dom": "^19.0.0"
 	}
 }

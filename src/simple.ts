@@ -1,11 +1,11 @@
 import { State } from './state';
 import { ContainerController } from './container';
-import { CoreTypeFlatValue, DataToKeysArray, DataType, InitilizeOptions, defaultStructIn } from './types';
+import { CoreTypeFlatValue, DataToKeysArray, DataType, defaultStructIn, InitializeOptions } from './types';
 import { StorageController } from './storage';
 import { EventController, EventRegistry } from './events';
 
 export class Simple<T extends object> {
-	public containerController: ContainerController;
+	public containerController: ContainerController<T>;
 	public storage: StorageController<T>;
 	public defaultStructure: Partial<CoreTypeFlatValue<T>>;
 	public events: EventController<T>;
@@ -13,7 +13,7 @@ export class Simple<T extends object> {
 	// internal data store object
 	public _data: DataType<T> = Object.create({});
 
-	constructor(incomingStruct: defaultStructIn<T>, c?: InitilizeOptions) {
+	constructor(incomingStruct: defaultStructIn<T>, c?: InitializeOptions<T>) {
 		this.bindToGlobal();
 
 		// initialize container controller that handles the re renders for useSimple hook
@@ -21,23 +21,40 @@ export class Simple<T extends object> {
 		this.storage = new StorageController(this, c?.storage);
 		this.events = new EventController(this);
 
+		// If persist keys are provided in options, set them
+		if (c?.persist) {
+			this.storage.persistence_keys = c.persist;
+		}
+
 		// save the default structure as a flat map
 		this.defaultStructure = Object.assign(incomingStruct, {});
 
 		// build the base structure
 		for (let item of Object.entries(incomingStruct)) {
-			const key = item[0];
-			const val = item[1];
+			const key = item[0] as keyof T;
+			const val = item[1] as T[keyof T];
 
 			this._data[key] = new State(this, key, val);
-			this._data[key].set(val);
+
+			// Check if this key is persisted and has a stored value
+			// Use 'as any' to bypass type checking since persistence_keys has a typing issue
+			const persistedValue = (this.storage.persistence_keys as Array<keyof T>).includes(key) ? this.storage.get(key.toString()) : null;
+			persistedValue.then((x) => {
+				// Initialize with persisted value if it exists, otherwise use default value
+				// Use _value directly to avoid triggering updates during initialization
+				const xv = x !== null ? (x as T[keyof T]) : val;
+				this._data[key]._value = xv;
+			});
+
+			// (most likely not needed) Trigger the re render for the components that are using this state
+			// this.containerController.triggerReRender(key);
 		}
 	}
 
 	// Easy and a clean way to access the core object without any other function that comes with the instance
 	public core() {
 		return {
-			...(this._data as { [K in keyof T]: State<T[K]> }),
+			...(this._data as { [K in keyof T]: State<T, K> }),
 			_events: this.events.eventsRegistryList as { [key: string]: EventRegistry },
 		};
 	}
@@ -59,11 +76,15 @@ export class Simple<T extends object> {
 	}
 
 	// Register the keys that will be persisted
+	/**
+	 * @deprecated use the storage controller instead
+	 * @param keys
+	 */
 	public persist(keys: DataToKeysArray<T>) {
 		this.storage.persistence_keys = keys;
 
 		// this will sync up the core with storage and reversed in order
-		this.storage.initializeStorageWithCore();
+		// this.storage.initializeStorageWithCore();
 	}
 
 	// Bind the instance to the global window

@@ -15,7 +15,7 @@ rm -rf dist
 
 # Build TypeScript files without source maps
 echo "🛠️  Building TypeScript files..."
-tsc --declaration --outDir dist --sourceMap false
+npm run build
 
 # Update version based on argument or patch by default
 VERSION_TYPE=${1:-patch}

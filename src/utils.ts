@@ -21,16 +21,33 @@ export const BuildStorageObjectFromCustom = async (data: DataType<any>, storage:
 export const parseWindowLocalStorageToMap = (data: DataType<any>) => {
 	let newObj: { [index: string]: any } = {};
 
-	if (typeof window === 'undefined' || typeof window?.localStorage !== 'object') {
+	// Check for browser environment more thoroughly
+	// This covers both Next.js server-side rendering and other non-browser environments
+	if (typeof window === 'undefined' || typeof window.localStorage === 'undefined' || !window.localStorage) {
 		return newObj;
 	}
 
-	for (let item of Object.entries(data)) {
-		if (window.localStorage[SimpleInstance().storage._prefixKey + item[0]] === undefined) {
-			newObj[item[0]] = undefined;
-		} else {
-			newObj[item[0]] = JSON.parse(window.localStorage[SimpleInstance().storage._prefixKey + item[0]]);
+	try {
+		// Use a try-catch block to handle potential localStorage access errors
+		// (like when cookies are disabled or in private browsing mode)
+		for (let item of Object.entries(data)) {
+			const key = SimpleInstance().storage._prefixKey + item[0];
+			const storedValue = window.localStorage.getItem(key);
+
+			if (storedValue === null) {
+				newObj[item[0]] = undefined;
+			} else {
+				try {
+					newObj[item[0]] = JSON.parse(storedValue);
+				} catch (parseError) {
+					// If JSON parsing fails, use the raw value
+					newObj[item[0]] = storedValue;
+					console.warn(`Failed to parse stored value for key ${key}:`, parseError);
+				}
+			}
 		}
+	} catch (storageError) {
+		console.warn('LocalStorage access error:', storageError);
 	}
 
 	return newObj;
