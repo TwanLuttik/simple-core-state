@@ -75,7 +75,7 @@ export class StorageController<T extends object> {
 		}
 	}
 
-	public async get(key: string): Promise<any> {
+	public async get(key: string): Promise<T[keyof T] | null> {
 		if (this.config?.customEnabled) {
 			return JSON.parse(await this.config.custom.get(this._prefixKey + key));
 		} else {

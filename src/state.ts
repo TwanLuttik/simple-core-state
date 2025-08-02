@@ -39,7 +39,7 @@ export class State<T extends object, K extends keyof T> {
 	 * @description Update a key in an object (only support for object)
 	 * @param newValue
 	 */
-	public patchObject(newValue: Partial<{ [K in keyof T]: T[K] }>) {
+	public patchObject(newValue: Partial<{ [B in keyof T[K]]: T[K][B] }>) {
 		if (!Object.entries(newValue).length) throw 'no changes detected';
 
 		// Check if the current value is an object

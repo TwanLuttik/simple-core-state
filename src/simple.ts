@@ -22,7 +22,7 @@ export class Simple<T extends object> {
 		this.events = new EventController(this);
 
 		// If persist keys are provided in options, set them
-		if (c?.persist) {
+		if (c?.persist?.length > 0) {
 			this.storage.persistence_keys = c.persist;
 		}
 
@@ -39,7 +39,7 @@ export class Simple<T extends object> {
 			// Check if this key is persisted and has a stored value
 			// Use 'as any' to bypass type checking since persistence_keys has a typing issue
 			const persistedValue = (this.storage.persistence_keys as Array<keyof T>).includes(key) ? this.storage.get(key.toString()) : null;
-			persistedValue.then((x) => {
+			persistedValue?.then((x) => {
 				// Initialize with persisted value if it exists, otherwise use default value
 				// Use _value directly to avoid triggering updates during initialization
 				const xv = x !== null ? (x as T[keyof T]) : val;
@@ -47,7 +47,7 @@ export class Simple<T extends object> {
 			});
 
 			// (most likely not needed) Trigger the re render for the components that are using this state
-			// this.containerController.triggerReRender(key);
+			this.containerController.triggerReRender(key);
 		}
 	}
 

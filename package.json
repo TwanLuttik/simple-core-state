@@ -1,7 +1,7 @@
 {
 	"name": "simple-core-state",
 	"description": "A simple core state manager for react",
-	"version": "0.0.31",
+	"version": "0.0.35",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"license": "MIT",
@@ -24,7 +24,8 @@
 		"build": "node ./node_modules/typescript/bin/tsc --declaration --outDir dist --sourceMap false",
 		"build:dev": "node ./node_modules/typescript/bin/tsc --sourceMap true",
 		"dev-watch": "node ./node_modules/typescript/bin/tsc --watch --sourceMap true",
-		"watch": "nodemon -e js,ts --ignore dist --exec \"node ./node_modules/typescript/bin/tsc --sourceMap && yalc push --changed\""
+		"watch": "nodemon -e js,ts --ignore dist --exec \"node ./node_modules/typescript/bin/tsc --sourceMap && yalc push --changed\"",
+		"prepublishOnly": "npm run build"
 	},
 	"files": [
 		"/dist/**/*"
@@ -37,11 +38,11 @@
 		"@types/node": "^22.15.29",
 		"@types/react": "^19",
 		"nodemon": "^3.1.10",
-		"react-test-renderer": "^19.0.0",
+		"react-test-renderer": "^19",
 		"tsc": "^2.0.4"
 	},
 	"peerDependencies": {
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react": "^19.0.0 || ^19.1.0",
+		"react-dom": "^19.0.0 || ^19.1.0"
 	}
 }
