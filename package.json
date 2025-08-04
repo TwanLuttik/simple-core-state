@@ -31,8 +31,7 @@
 		"/dist/**/*"
 	],
 	"dependencies": {
-		"global": "^4.4.0",
-		"typescript": "^5.8.3"
+		"global": "^4.4.0"
 	},
 	"devDependencies": {
 		"@types/node": "^22.15.29",
@@ -41,7 +40,8 @@
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"react-test-renderer": "^18.0.0",
-		"tsc": "^2.0.4"
+		"tsc": "^2.0.4",
+		"typescript": "^5.8.3"
 	},
 	"peerDependencies": {
 		"react": ">=16.8.0",
