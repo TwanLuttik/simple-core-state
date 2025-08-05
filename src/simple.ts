@@ -45,9 +45,6 @@ export class Simple<T extends object> {
 				const xv = x !== null ? (x as T[keyof T]) : val;
 				this._data[key]._value = xv;
 			});
-
-			// (most likely not needed) Trigger the re render for the components that are using this state
-			this.containerController.triggerReRender(key);
 		}
 	}
 

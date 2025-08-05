@@ -12,6 +12,7 @@ export class State<T extends object, K extends keyof T> {
 		this.instance = instance;
 		this._name = key;
 		this._default = value;
+		this._value = value;
 	}
 
 	/**
