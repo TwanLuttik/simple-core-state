@@ -1,14 +1,18 @@
 {
-  "compilerOptions": {
-    "module": "ESNext",
-    "declaration": true,
-    "target": "es2015",
-    "outDir": "./dist",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "lib": ["es2015", "dom"],
+	"compilerOptions": {
+		"module": "ESNext",
+		"declaration": true,
+		"target": "ESNext",
+		"outDir": "./dist",
+		"moduleResolution": "node",
+		"allowSyntheticDefaultImports": true,
+		"lib": ["es2015", "dom"],
+		"strict": true,
+		"esModuleInterop": true,
+		"emitDeclarationOnly": true,
 
-    "sourceMap": true,
-  },
-  "include": ["src/**/*"]
+		"sourceMap": true,
+		"jsx": "react-jsx"
+	},
+	"include": ["src/**/*"]
 }

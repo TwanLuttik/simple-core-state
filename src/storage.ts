@@ -62,7 +62,7 @@ export class StorageController<T extends object> {
 	}
 
 	public async set(key: string, value: any) {
-		if (this.config?.customEnabled) {
+		if (this.config?.customEnabled && this.config.custom) {
 			await this.config.custom.set(this._prefixKey + key, JSON.stringify(value));
 		} else {
 			// Check if we're in a browser environment
@@ -76,7 +76,7 @@ export class StorageController<T extends object> {
 	}
 
 	public async get(key: string): Promise<T[keyof T] | null> {
-		if (this.config?.customEnabled) {
+		if (this.config?.customEnabled && this.config.custom) {
 			return JSON.parse(await this.config.custom.get(this._prefixKey + key));
 		} else {
 			// Check if we're in a browser environment

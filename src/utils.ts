@@ -6,10 +6,10 @@ import { SimpleInstance } from './instance';
  * @description Build an k/v object from the custom storage integration
  */
 export const BuildStorageObjectFromCustom = async (data: DataType<any>, storage: StorageController<any>): Promise<{ [index: string]: any }> => {
-	let newObj = {};
+	let newObj: Record<string, any> = {};
 
-	for (let item of Object.entries(data)) {
-		newObj[item[0]] = await storage.get(item[0]);
+	for (const [key] of Object.entries(data)) {
+		newObj[key] = await storage.get(key);
 	}
 
 	return newObj;

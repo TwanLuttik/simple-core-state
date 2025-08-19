@@ -22,7 +22,7 @@ export class Simple<T extends object> {
 		this.events = new EventController(this);
 
 		// If persist keys are provided in options, set them
-		if (c?.persist?.length > 0) {
+		if (c?.persist && c?.persist?.length > 0) {
 			this.storage.persistence_keys = c.persist;
 		}
 
@@ -61,14 +61,11 @@ export class Simple<T extends object> {
 	 * TODO: Figure out if we need to re-render every component by looping trough or there is a react batch call function?
 	 */
 	public reset() {
-		for (const i of Object.entries(this._data)) {
-			this._data[i[0]]._value = this._data[i[0]]._default;
-			this._data[i[0]].persistCheck();
-		}
+		const keys = Object.keys(this._data) as Array<keyof T>;
 
-		for (const i of Object.entries(this._data)) {
-			this._data[i[0]]._value = this._data[i[0]]._default;
-			this.containerController.triggerReRender(this._data[i[0]]._name);
+		for (const key of keys) {
+			// Use the public API to ensure persistence and rerender
+			this._data[key].set(this._data[key]._default);
 		}
 	}
 
@@ -86,8 +83,9 @@ export class Simple<T extends object> {
 
 	// Bind the instance to the global window
 	private bindToGlobal() {
-		if (!globalThis['Simple_']) {
-			globalThis['Simple_'] = this;
+		const g = globalThis as any;
+		if (!g.Simple_) {
+			g.Simple_ = this;
 		}
 	}
 }

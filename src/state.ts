@@ -40,12 +40,13 @@ export class State<T extends object, K extends keyof T> {
 	 * @description Update a key in an object (only support for object)
 	 * @param newValue
 	 */
-	public patchObject(newValue: Partial<{ [B in keyof T[K]]: T[K][B] }>) {
+	public patchObject(newValue: Partial<T[K]>) {
 		if (!Object.entries(newValue).length) throw 'no changes detected';
 
 		// Check if the current value is an object
 		if (typeof this._value !== 'object') {
-			this._value = Object.assign({});
+			// initialize as an empty object of the correct shape
+			this._value = {} as unknown as T[K];
 			// throw `Can't patch a non object key`;
 		}
 
@@ -56,13 +57,16 @@ export class State<T extends object, K extends keyof T> {
 
 		this._history.push({ value: this._value, date: new Date().getTime() });
 
-		// loop trough the k/v to patch the keys in the object
-		for (const k of Object.entries(newValue)) {
-			if (this._value === null) {
-				const x = { [k[0]]: k[1] } as any;
-				this._value = x;
-			} else {
-				this._value[k[0]] = k[1];
+		// loop through the k/v to patch the keys in the object with proper typing
+		for (const key in newValue) {
+			if (Object.prototype.hasOwnProperty.call(newValue, key)) {
+				const k = key as keyof T[K];
+				const v = newValue[k] as T[K][typeof k];
+				if (this._value === null || typeof this._value !== 'object') {
+					this._value = { [k]: v } as unknown as T[K];
+				} else {
+					(this._value as Record<keyof T[K], unknown>)[k] = v as unknown as T[K][typeof k];
+				}
 			}
 		}
 

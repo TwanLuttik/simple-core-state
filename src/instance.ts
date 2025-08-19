@@ -1,5 +1,6 @@
 import { Simple } from './simple';
 
 export const SimpleInstance = (): Simple<any> => {
-	return globalThis.Simple_;
+	const g = globalThis as any;
+	return g.Simple_;
 };

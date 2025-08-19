@@ -1,12 +1,12 @@
 import { Simple } from './simple';
-import { DataCallback, EventListRegistryType } from './types';
+import { DataCallback } from './types';
 import { makeid } from './utils';
 
 /**
  * This is the main controller that controls all the events and etc of the underlaying structure
  */
 export class EventController<T> {
-	eventsRegistryList: EventListRegistryType<T> = Object.create({});
+	eventsRegistryList: Record<string, EventRegistry> = Object.create({});
 
 	constructor(rootInstance: Simple<any>) {}
 
