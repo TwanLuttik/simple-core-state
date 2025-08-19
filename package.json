@@ -1,7 +1,7 @@
 {
 	"name": "simple-core-state",
 	"description": "A simple core state manager for react",
-	"version": "0.0.48-beta.0",
+	"version": "0.0.48-prerelease.0",
 	"main": "dist/index.cjs",
 	"module": "dist/index.esm.js",
 	"types": "dist/index.d.ts",
