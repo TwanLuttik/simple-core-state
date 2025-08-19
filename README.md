@@ -4,22 +4,45 @@ _This Library is still work in progress_
 
 <br>
 
-## **Inspiration**
+## **Features** ✨
+
+- **Simple, type-safe core state** with minimal API 🧠
+- **React hooks**: `useSimple()` and `useSimpleEvent()` ⚛️
+- **Persistence** per key via storage adapter (localStorage by default) 💾
+- **Events system** to broadcast and subscribe 📣
+- **Tree-shakeable** ESM build and `sideEffects: false` for optimal bundle size 🌲
+
+<br>
+
+## **Inspiration** 💡
 
 The inspiration came from using using [pulseJS](https://github.com/pulse-framework/pulse), but since that its not maintained anymore and i wanted to create a simple core state library that is easy to use and expand, i have created **Simple Core State** which the name already says **simple**.
 
 <br>
 
-## **Installation**
+## **Installation** 📦
 
-```
+```bash
+# npm
+npm install simple-core-state
+
+# yarn
 yarn add simple-core-state
+
+# pnpm
+pnpm add simple-core-state
+```
+
+After installing, import from the package entry:
+
+```ts
+import { SimpleCore, useSimple, useSimpleEvent } from 'simple-core-state';
 ```
 
 <br>
 <br>
 
-## **Setting up the core**
+## **Setting up the core** ⚙️
 
 ```ts
 import { SimpleCore } from 'simple-core-state';
@@ -47,12 +70,15 @@ const defaultCore = {
 
 // Initialize the core
 export const instance = new SimpleCore<ICoreType>(defaultCore, {
-	// Storage configurations
+	// Persist specific keys
+	persist: ['currentTheme', 'lastUpdate'],
+
+	// Storage configurations (optional)
 	storage: {
-		// You can se a custom prefix for the storage, the default is ['_simple' + _keyname]
+		// You can set a custom prefix for storage, default is ['_simple' + _keyname]
 		prefix: 'customPrefix',
 
-		// Support other storage library's for such cases as for React Native
+		// Support other storage libraries (e.g. React Native)
 		custom: {
 			async get(key) {
 				return await AnotherStorageLib.get(key);
@@ -63,9 +89,6 @@ export const instance = new SimpleCore<ICoreType>(defaultCore, {
 		},
 	},
 });
-
-// Persist values by an array with keys
-instance.perist(['currentTheme', 'lastUpdate']);
 
 // Export the core for easy access to hooks and updates and etc
 export const core = instance.core();
@@ -89,7 +112,7 @@ core.app.updatePiece('running', true);
 <br>
 <br>
 
-## **Using the hook**
+## **Using the hook** 🪝
 
 ```jsx
 import * as React from 'react';
@@ -113,7 +136,20 @@ export const App = () => {
 <br/>
 <br/>
 
-# Events _(🚧 under development)_
+## **Tree-shaking & bundle size** 🌲📦
+
+- ESM build at `dist/index.esm.js` and `"sideEffects": false` in `package.json` enable tree-shaking.
+- Import only what you use for optimal bundles:
+
+```ts
+import { SimpleCore, useSimple } from 'simple-core-state';
+```
+
+Most bundlers (Vite, Next.js, Webpack, Rollup) will remove unused exports automatically.
+
+<br/>
+
+# Events _(🚧 under development)_ 📡
 
 <br/>
 
@@ -131,7 +167,7 @@ instance.events.create(['someName', 'multiple_events']);
 
 ```tsx
 import React from 'react';
-import { myCore } from './core.ts';
+import { core } from './core.ts';
 import { useSimpleEvent } from 'simple-core-state';
 
 export const App = () => {

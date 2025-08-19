@@ -2,8 +2,16 @@
 	"name": "simple-core-state",
 	"description": "A simple core state manager for react",
 	"version": "0.0.46",
-	"main": "dist/index.js",
+	"main": "dist/index.cjs",
+	"module": "dist/index.esm.js",
 	"types": "dist/index.d.ts",
+	"sideEffects": false,
+	"exports": {
+		".": {
+			"import": "./dist/index.esm.js",
+			"require": "./dist/index.cjs"
+		}
+	},
 	"license": "MIT",
 	"private": false,
 	"homepage": "https://github.com/TwanLuttik/simple-core-state#readme",
@@ -21,7 +29,7 @@
 		"state-manager"
 	],
 	"scripts": {
-		"build": "node ./node_modules/typescript/bin/tsc --declaration --outDir dist --sourceMap false",
+		"build": "rollup -c",
 		"build:dev": "node ./node_modules/typescript/bin/tsc --sourceMap true",
 		"dev-watch": "node ./node_modules/typescript/bin/tsc --watch --sourceMap true",
 		"watch": "nodemon -e js,ts --ignore dist --exec \"node ./node_modules/typescript/bin/tsc --sourceMap && yalc push --changed\"",
@@ -35,12 +43,19 @@
 		"typescript": "^5.8.3"
 	},
 	"devDependencies": {
+		"@babel/preset-react": "^7.27.1",
+		"@rollup/plugin-babel": "^6.0.4",
+		"@rollup/plugin-commonjs": "^28.0.6",
+		"@rollup/plugin-node-resolve": "^16.0.1",
+		"@rollup/plugin-typescript": "^12.1.4",
 		"@types/node": "^22.15.29",
 		"@types/react": ">=16.8.0",
 		"nodemon": "^3.1.10",
 		"react": ">=16.8.0",
 		"react-dom": ">=16.8.0",
 		"react-test-renderer": ">=16.8.0",
-		"tsc": "^2.0.4"
+		"rollup": "^4.46.3",
+		"tsc": "^2.0.4",
+		"tslib": "^2.8.1"
 	}
 }
